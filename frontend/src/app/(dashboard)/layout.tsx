@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, UploadCloud, Compass, LogOut, Menu, X, User, MessageSquare, FileEdit, Layers, Award, ShieldCheck, GitBranch, UserCircle } from 'lucide-react';
+import { LayoutDashboard, UploadCloud, Compass, LogOut, Menu, X, User, MessageSquare, FileEdit, Layers, Award, ShieldCheck, GitBranch, UserCircle, Search } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -23,6 +23,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { name: 'Upload Resume', href: '/upload', icon: UploadCloud },
     { name: 'Resume Editor', href: '/editor', icon: FileEdit },
     { name: 'Job Tracker', href: '/tracker', icon: Layers },
+    { name: 'Real-Time Job Search', href: '/jobs', icon: Search },
     { name: 'Job Matching', href: '/match', icon: Compass },
     { name: 'Mock Interview', href: '/interview', icon: Award },
     { name: 'AI Recruiter Audit', href: '/recruiter', icon: ShieldCheck },

@@ -31,6 +31,7 @@ from backend.app.api.interviews import router as interviews_router
 from backend.app.api.editor import router as editor_router
 from backend.app.api.recruiter import router as recruiter_router
 from backend.app.api.profile import router as profile_router
+from backend.app.api.jobs import router as jobs_router
 
 # Load env variables
 load_dotenv()
@@ -69,6 +70,7 @@ app.include_router(interviews_router, prefix="/api")
 app.include_router(editor_router, prefix="/api")
 app.include_router(recruiter_router, prefix="/api")
 app.include_router(profile_router, prefix="/api")
+app.include_router(jobs_router, prefix="/api")
 
 @app.get("/")
 def read_root():

@@ -14,7 +14,8 @@ import {
   FileEdit,
   ArrowRight,
   TrendingUp,
-  AlertCircle
+  AlertCircle,
+  FileDown
 } from 'lucide-react';
 import { api } from '@/lib/api';
 
@@ -45,6 +46,8 @@ export default function EditorPage() {
   const [isLoadingResumes, setIsLoadingResumes] = useState(true);
   const [isLoadingResume, setIsLoadingResume] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [isExportingDocx, setIsExportingDocx] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
@@ -299,6 +302,54 @@ export default function EditorPage() {
     }
   };
 
+  const handleExportPdf = async () => {
+    if (!selectedResumeId) return;
+    setIsExportingPdf(true);
+    try {
+      const response = await api.get(`/editor/export/pdf/${selectedResumeId}`, {
+        responseType: 'blob'
+      });
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${selectedResume?.filename.split('.')[0] || 'resume'}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setSuccessMsg('PDF exported successfully!');
+    } catch (err) {
+      console.error('PDF export failed:', err);
+      setErrorMsg('Failed to export PDF resume.');
+    } finally {
+      setIsExportingPdf(false);
+    }
+  };
+
+  const handleExportDocx = async () => {
+    if (!selectedResumeId) return;
+    setIsExportingDocx(true);
+    try {
+      const response = await api.get(`/editor/export/docx/${selectedResumeId}`, {
+        responseType: 'blob'
+      });
+      const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${selectedResume?.filename.split('.')[0] || 'resume'}.docx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setSuccessMsg('DOCX exported successfully!');
+    } catch (err) {
+      console.error('DOCX export failed:', err);
+      setErrorMsg('Failed to export DOCX resume.');
+    } finally {
+      setIsExportingDocx(false);
+    }
+  };
+
   return (
     <div className="space-y-8 relative">
       {/* Top Controls / Selection */}
@@ -337,6 +388,32 @@ export default function EditorPage() {
               <Save className="w-4 h-4" />
             )}
             Save Version
+          </button>
+
+          <button
+            onClick={handleExportPdf}
+            disabled={isExportingPdf || !selectedResumeId}
+            className="flex items-center gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-xl text-sm font-semibold transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isExportingPdf ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <FileDown className="w-4 h-4 text-cyan-400" />
+            )}
+            Export PDF
+          </button>
+
+          <button
+            onClick={handleExportDocx}
+            disabled={isExportingDocx || !selectedResumeId}
+            className="flex items-center gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-xl text-sm font-semibold transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isExportingDocx ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <FileDown className="w-4 h-4 text-purple-400" />
+            )}
+            Export DOCX
           </button>
         </div>
       </div>

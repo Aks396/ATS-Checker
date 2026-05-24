@@ -16,11 +16,12 @@ backend/__pycache__/
 .env.production.local
 backend/.env
 
-# Databases and Vector Stores
+# Databases, Vector Stores and Dynamic Uploads
 *.db
 backend/ats_analyzer.db
 backend/chroma_db/
 chroma_db/
+backend/app/uploads/
 
 # Node/Next.js dependencies and build folders
 node_modules/
