@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # MySQL Database Container
+  mysql:
+    image: mysql:8.0
+    container_name: ats_mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ats_db
+      MYSQL_USER: ats_user
+      MYSQL_PASSWORD: ats_password
+      MYSQL_ROOT_PASSWORD: root_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  # FastAPI Backend Service
+  backend:
+    build: ./backend
+    container_name: ats_backend
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=mysql://ats_user:ats_password@mysql:3306/ats_db
+      - SECRET_KEY=supersecret-ats-analyzer-key-change-in-prod-2026
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - FRONTEND_URL=http://localhost:3000
+    depends_on:
+      - mysql
+
+  # Next.js Frontend Client
+  frontend:
+    build: ./frontend
+    container_name: ats_frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000/api
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:
